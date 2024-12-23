@@ -21,7 +21,7 @@ extension Image{
     }
 }
 struct ContentView: View {
-    private let imageUrl:String = "https://credo.academy/credo-academy@3x-png"
+    private let imageUrl:String = "https://myfreelogomaker.com/wp-content/uploads/2020/11/Brant-Construction-padded-logo.png"
     var body: some View {
 //        AsyncImage(url: URL(string: imageUrl), scale: 3.0)
 //        AsyncImage(url: URL(string: imageUrl)) { image in
@@ -45,15 +45,42 @@ struct ContentView: View {
 //        }
 //        .padding(40)
 
-        AsyncImage(url: URL(string:imageUrl)){ phase in
-            if let image = phase.image{
-                image.imageModifier()
-            } else if phase.error != nil {
-                Image(systemName: "ant.circle.fill").iconModifier()
-            } else{
-                Image(systemName: "photo.circle.fill").iconModifier()
+//        AsyncImage(url: URL(string:imageUrl)){ phase in
+//            if let image = phase.image{
+//                image.imageModifier()
+//            } else if phase.error != nil {
+//                Image(systemName: "ant.circle.fill").iconModifier()
+//            } else{
+//                Image(systemName: "photo.circle.fill").iconModifier()
+//            }
+//        }.padding(40)
+
+        AsyncImage(
+url: URL(string: imageUrl),
+transaction: Transaction(
+    animation:
+            .spring(
+                response: 0.5,
+                dampingFraction: 0.6,
+                blendDuration: 0.25
+            )
+)
+        ){phase in
+            switch phase{
+                case .success(let image):
+                    image.imageModifier()
+//                        .transition(.move(edge: .bottom))
+//                        .transition(.slide)
+                        .transition(.scale)
+                case .failure(_):
+                    Image(systemName: "ant.circle.fill").iconModifier()
+                case .empty:
+                    Image(systemName: "photo.circle.fill").iconModifier()
+                @unknown default:
+                    ProgressView()
             }
-        }.padding(40)
+        }
+        .padding(40)
     }
 }
 
